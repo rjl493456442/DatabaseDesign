@@ -27,7 +27,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-   
+
 
 </head>
 
@@ -353,17 +353,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {%for key,val in dist.items%}
+                                        {%for itm in alluser%}
                                         <tr>
-                                            <td>{{key}}</td>
-                                            {%for itm in val%}
-                                            <td>{{itm.event.event_name}}-{{itm.grade}}</td>
+                                            <td>{{itm.athlete}}</td>
+                                            {%for i in itm.event%}
+                                            <td>{{i.event.event_name}}-{{i.grade}}</td>
                                             {%endfor%}
-                                            <td>180</td>
-                                            <td>3</td>
+                                            <td>{{itm.grade}}</td>
+                                            <td>{{itm.rank}}</td>
                                         </tr>
                                         {%endfor%}
-                                        
+
                                     </tbody>
                                 </table>
                             </div>

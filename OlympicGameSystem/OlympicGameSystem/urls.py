@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^search/$', views.search),
     url(r'^alldetail/$', views.alldetail),
     url(r'^team/$', views.team),
-    url(r'^userprofile/(?P<username>[A-Za-z1-9]+)/$', views.userprofile),
+    url(r'^userprofile/(?P<username>[A-Za-z0-9]+)/$', views.userprofile),
     url(r'^event/(?P<id>\d+)/$', views.eventdetail),
     url(r'^team/(?P<id>\d+)/$', views.teamdetail),
 ]

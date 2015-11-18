@@ -8,6 +8,24 @@ from models import *
 from django.contrib.auth.decorators import  login_required
 from django.contrib.auth import logout
 from datetime import datetime
+
+def calcuGrade(grade):
+    if grade == None:
+        return 0
+    cnt = 0
+    if grade < 50:
+        cnt += 50
+    elif grade >= 50 and grade < 60:
+        cnt += 40
+    elif grade >= 60 and grade < 70:
+        cnt += 30
+    elif grade >= 70 and grade < 80:
+        cnt += 20
+    else:
+        cnt += 10
+    return cnt
+
+
 def convertNationality(nationality):
     if nationality == 'CN':
         return "中国"
@@ -109,17 +127,14 @@ def eventdetail(request,id):
             attendid = request.POST['attendid']
             grade = request.POST['grade']
             rank = request.POST['rank']
-            print rank
             a = Attend.objects.get(pk = attendid)
             a.grade = float(grade)
             a.rank = rank
-            print a.grade
-            print type(a.grade)
+            print a.status
             # update World Best && Competition Best
             updateComLst = CompetitionEvent.objects.filter(event_name = comEvent.event_name)
             for itm in updateComLst:
                 if itm.best_grade > a.grade:
-                    print "Update"
                     itm.best_grade = a.grade
                     itm.save()
             for itm in updateComLst:
@@ -187,18 +202,32 @@ def eventdetail(request,id):
 @login_required
 def alldetail(request):
     all_event = CompetitionEvent.objects.filter(event_category = 2)
-    for itm in all_event:
-        print itm
     athletes = Athlete.objects.all()
-    dist = {}
+    alluser = []
     for itm in athletes:
         info = []
+        dist = {}
         for q in all_event:
             eventlst = Attend.objects.filter(athlete = itm, event = q)
             if len(eventlst) > 0:
                 info.append(eventlst[0])
         if len(info) > 0 and len(info) <= 3:
-            dist[itm] = info
+            cnt = 0
+            for i in info:
+                # calcu each event score
+                cnt += calcuGrade(i.grade)
+
+            dist['athlete'] = itm
+            dist['event'] = info
+            dist['grade'] = cnt
+            alluser.append(dist)
+
+    # sort
+    alluser = sorted(alluser, key = lambda x:x['grade'], reverse = True )
+    for index,itm in enumerate(alluser):
+        itm['rank'] = index + 1
+
+
     u = request.user
     return render_to_response("alldetail.html",locals())
 @login_required
@@ -220,16 +249,12 @@ def eventedit(request):
     if request.method == "POST":
         event_id =  request.POST['events']
         nmajor_judge = request.POST['major_judge']
-        print nmajor_judge
         major_judge = Judge.objects.filter(name = nmajor_judge)
-        print "DEBUG"
         njudges = request.POST.getlist("judges")
         judges = []
         for itm in njudges:
             judges.append(Judge.objects.filter(name = itm)[0])
         athletes = request.POST.getlist("athletes")
-        for itm in athletes:
-            print itm
         if len(judges) != 2:
             pass
         else:
@@ -244,7 +269,7 @@ def eventedit(request):
             for itm in athletes:
                 ath.append(Athlete.objects.filter(name = itm)[0])
             for itm in ath:
-                p = itm.a_athlete.all()
+                p = itm.a_athlete.filter(event = e)
                 for i in p:
                     i.status = 1
                     i.save()
@@ -291,7 +316,7 @@ def eventapply(request):
             print "DEBUG"
     else:
         u =request.user
-        events = CompetitionEvent.objects.filter(status = 0)
+        events = CompetitionEvent.objects.filter(status = 0, level = 0)
     return render_to_response('eventapply.html', locals())
 
 def userprofile(request, username):

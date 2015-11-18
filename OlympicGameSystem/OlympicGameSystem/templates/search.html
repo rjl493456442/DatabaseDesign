@@ -27,7 +27,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-   
+
 
 </head>
 
@@ -44,7 +44,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">运动会管理系统</a>
+                <a class="navbar-brand" href="/index/">运动会管理系统</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -359,26 +359,33 @@
                                                 {%endfor%}
                                             </select>
                                         </div>
-                                        
+
                                         <div class="form-group">
                                             <label>世界纪录</label>
-                                            
+                                            {% ifequal world_grade 100000 %}
+                                            <input class="form-control world_best" id = "world_grade_{{itm.event_name}}" value = "没有比赛记录">
+                                            {%endifequal%}
+                                            {% ifnotequal world_grade 100000 %}
                                             <input class="form-control world_best" id = "world_grade_{{itm.event_name}}" value = "{{world_grade}}">
-                                            
+                                            {%endifnotequal%}
                                             <label>赛会纪录</label>
-                                            
-                                            <input class="form-control competition_best"  id = "com_grade_{{itm.event_name}}" value = "{{com_grade}}"  >
-                                           
-                                        </div>                                   
+                                            {% ifequal com_grade 100000 %}
+                                            <input class="form-control competition_best"  id = "com_grade_{{itm.event_name}}" value = "没有比赛记录"  >
+                                            {%endifequal%}
+                                            {% ifnotequal com_grade 100000 %}
+                                            <input class="form-control competition_best"  id = "com_grade_{{itm.event_name}}" value ="{{com_grade}}"  >
+                                            {%endifnotequal%}
+                                        </div>
+                                        </div>
                                         <button type="submit" class="btn btn-default">提交</button>
-                                        
+
                                     </form>
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
                             </div>
                             <!-- /.row (nested) -->
                         </div>
-                        
+
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
